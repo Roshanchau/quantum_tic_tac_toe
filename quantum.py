@@ -33,6 +33,7 @@ def board_coordinates():
 
 
 def quanutum_game(circuit,recent_moves):
+    """This will return the circuit and draw the circuit diagram"""
     first_move = recent_moves[0]
     second_move = recent_moves[1]
     # hamard gate
@@ -93,6 +94,81 @@ def draw_x_or_y(board_coordinates):
                 text_rect = text.get_rect(center=(col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2, row * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2))
                 screen.blit(text, text_rect)
 
+def check_winner(board_coordinates):
+    # Check rows
+    for row in range(3):
+        if board_coordinates[row][0] == board_coordinates[row][1] == board_coordinates[row][2] != 0:
+            return board_coordinates[row][0]
+
+    # Check columns
+    for col in range(3):
+        if board_coordinates[0][col] == board_coordinates[1][col] == board_coordinates[2][col] != 0:
+            return board_coordinates[0][col]
+
+    # Check diagonals
+    if board_coordinates[0][0] == board_coordinates[1][1] == board_coordinates[2][2] != 0:
+        return board_coordinates[0][0]
+    if board_coordinates[0][2] == board_coordinates[1][1] == board_coordinates[2][0] != 0:
+        return board_coordinates[0][2]
+
+    return 0
+
+def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count):
+    
+    count += 1
+    print(count)
+    if x_turn:
+        board_coordinates[rows][cols] = 1
+        if quantum_moves and count == 2:
+            x_turn = False
+            count = 0
+        elif not quantum_moves:
+            x_turn = False
+        
+        
+    else:       
+        board_coordinate[rows][cols] = -1
+        if quantum_moves and count == 2:
+            x_turn = True
+            count = 0
+        elif not quantum_moves:
+            x_turn = True
+
+    return x_turn, count
+
+
+def check_complete_fill(board_coordinates):
+    for row in range(3):
+        for col in range(3):
+            if board_coordinates[row][col] == 0:
+                return False
+    return True
+            
+
+
+        # count += 1
+        # if count == 2 and quantum_moves:
+            
+        #     x_turn = False
+        #     count = 0
+        
+        # elif not quantum_moves:
+        #     x_turn = False
+        
+
+    # else:
+    #     board_coordinate[rows][cols] = -1
+    #     count += 1
+    #     if count >= 2 and quantum_moves:
+            
+    #         x_turn = True
+    #         count = 0
+    #     elif not quantum_moves:
+    #         x_turn = True
+
+
+
+
 
 board_coordinate = board_coordinates()
 
@@ -121,8 +197,6 @@ while running:
             rows = mouse_y // (HEIGHT // GRID_SIZE)
             recent_moves.append([rows, cols])
             total_count += 1
-                
-
 
 
             if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
@@ -135,32 +209,14 @@ while running:
 
                         # if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
                 print("This is is_collapse", quantum_moves)
-                if x_turn:
-                    board_coordinate[rows][cols] = 1
-                    count += 1
-                    if count == 2 and quantum_moves:
-                        
-                        x_turn = False
-                        count = 0
-                    
-                    elif not quantum_moves:
-                        x_turn = False
-                    
+                x_turn, count = before_collapse(board_coordinate, rows, cols, quantum_moves, x_turn, count)
 
-                else:
-                    board_coordinate[rows][cols] = -1
-                    count += 1
-                    if count >= 2 and quantum_moves:
-                        
-                        x_turn = True
-                        count = 0
-                    elif not quantum_moves:
-                        x_turn = True
                 
                 if len(recent_moves) == 2:
                     quanutum_game(circuit, recent_moves)
             
                 elif total_count == 9:
+                    is_collapse = True
                     quantum_moves = False
                     circuit.x(recent_moves[0][0]*3 + recent_moves[0][1])
                     x_turn = False
@@ -173,10 +229,26 @@ while running:
                             board_coordinate[i//3][i%3] = 0
                         else:
                             total_count += 1
+                    winner=check_winner(board_coordinate)
+                    if winner == 1:
+                        print("X wins!")
+                        cprint("X wins!", 'red')
+                        # running = False
+                    elif winner == -1:
+                        print("O wins!")
+                        cprint("O wins!", 'blue')
+
 
     # Clear the screen
     screen.fill((0, 0, 0))
     draw_grid()
+
+
+        # running = False
+
+
+
+
 
 
     
