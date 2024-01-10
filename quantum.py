@@ -55,7 +55,13 @@ def quanutum_game(circuit,recent_moves):
     # circuit.h()
     # ...
 
-def collapse(circuit):
+def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, total_count):
+    is_collapse = True
+    quantum_moves = False
+    circuit.x(recent_moves[0][0]*3 + recent_moves[0][1])
+    x_turn = False
+    print(circuit.draw())
+    recent_moves.clear()
     circuit.measure([0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8])
     print(circuit.draw())
     simulator = qiskit.Aer.get_backend('qasm_simulator')
@@ -71,12 +77,16 @@ def collapse(circuit):
     # reset the circuit
     for i in range(9):  
         circuit.reset(i)
+
+    for i,val in enumerate(string):
+        if val == '0':
+            print("This is i", i)
+            board_coordinate[i//3][i%3] = 0
+        else:
+            total_count += 1
     
 
-    return string
-
-# def after_collapse(circuit, string):
-
+    return is_collapse, quantum_moves, x_turn, recent_moves, total_count
 
 
 def draw_x_or_y(board_coordinates):
@@ -143,6 +153,8 @@ def check_complete_fill(board_coordinates):
             if board_coordinates[row][col] == 0:
                 return False
     return True
+
+
             
 
 
@@ -214,21 +226,15 @@ while running:
                 
                 if len(recent_moves) == 2:
                     quanutum_game(circuit, recent_moves)
+                
+
             
-                elif total_count == 9:
-                    is_collapse = True
-                    quantum_moves = False
-                    circuit.x(recent_moves[0][0]*3 + recent_moves[0][1])
-                    x_turn = False
-                    print(circuit.draw())
-                    recent_moves.clear()
-                    string = collapse(circuit)
-                    for i,val in enumerate(string):
-                        if val == '0':
-                            print("This is i", i)
-                            board_coordinate[i//3][i%3] = 0
-                        else:
-                            total_count += 1
+                elif check_complete_fill(board_coordinate):
+                    if not is_collapse:
+                        is_collapse, quantum_moves, x_turn, recent_moves, total_count = collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, total_count)
+
+
+                if is_collapse:
                     winner=check_winner(board_coordinate)
                     if winner == 1:
                         print("X wins!")
@@ -239,17 +245,13 @@ while running:
                         cprint("O wins!", 'blue')
 
 
+
     # Clear the screen
     screen.fill((0, 0, 0))
     draw_grid()
 
 
         # running = False
-
-
-
-
-
 
     
     # quanutum_game(board_coordinates, circuit, x_turn)
