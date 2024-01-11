@@ -55,12 +55,12 @@ def quanutum_game(circuit,recent_moves):
     # circuit.h()
     # ...
 
-def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, total_count):
+def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves):
     is_collapse = True
     quantum_moves = False
-    circuit.x(recent_moves[0][0]*3 + recent_moves[0][1])
+    if recent_moves:
+        circuit.x(recent_moves[0][0]*3 + recent_moves[0][1])
     x_turn = False
-    print(circuit.draw())
     recent_moves.clear()
     circuit.measure([0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8])
     print(circuit.draw())
@@ -82,27 +82,35 @@ def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, total_co
         if val == '0':
             print("This is i", i)
             board_coordinate[i//3][i%3] = 0
-        else:
-            total_count += 1
+
     
 
-    return is_collapse, quantum_moves, x_turn, recent_moves, total_count
+    return is_collapse, quantum_moves, x_turn
 
 
-def draw_x_or_y(board_coordinates):
+def draw_x_or_y(board_coordinates, quantum_moves_count):
     font = pygame.font.Font('freesansbold.ttf', 60)
+    colors_x = [(0, 255, 0), (0, 0, 255), (255, 0, 0)]
+    colors_y = [(255, 0, 255), (255, 255, 0),(0, 255, 255)]
+    
+    count_x = 0
+    count_o = 0
     for row in range(3):
         for col in range(3):
             if board_coordinates[row][col] == 1:
-                
-                # Here True is written to enable smooth edges
-                text = font.render("X", True, (255, 0, 0))
+                # Most hard logic, 4 ghanta lagyo.😂😂
+                color_index = count_x // 2 % len(colors_x)
+                text = font.render("X", True, colors_x[color_index])
                 text_rect = text.get_rect(center=(col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2, row * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2))
                 screen.blit(text, text_rect)
+                count_x += 1
             elif board_coordinates[row][col] == -1:
-                text = font.render("O", True, (0, 0, 255))
+                color_index = count_o // 2 % len(colors_y)
+                text = font.render("O", True, colors_y[color_index])
                 text_rect = text.get_rect(center=(col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2, row * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2))
                 screen.blit(text, text_rect)
+                count_o += 1
+
 
 def check_winner(board_coordinates):
     # Check rows
@@ -124,7 +132,7 @@ def check_winner(board_coordinates):
     return 0
 
 def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count):
-    
+    """It will decide x_turn for the quantum moves or the normal moves"""
     count += 1
     print(count)
     if x_turn:
@@ -137,48 +145,23 @@ def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count)
         
         
     else:       
-        board_coordinate[rows][cols] = -1
+        board_coordinates[rows][cols] = -1
         if quantum_moves and count == 2:
             x_turn = True
             count = 0
         elif not quantum_moves:
             x_turn = True
 
-    return x_turn, count
+    return x_turn, count, board_coordinates
 
 
 def check_complete_fill(board_coordinates):
+    print("This is board_coordinates", board_coordinates)
     for row in range(3):
         for col in range(3):
             if board_coordinates[row][col] == 0:
                 return False
     return True
-
-
-            
-
-
-        # count += 1
-        # if count == 2 and quantum_moves:
-            
-        #     x_turn = False
-        #     count = 0
-        
-        # elif not quantum_moves:
-        #     x_turn = False
-        
-
-    # else:
-    #     board_coordinate[rows][cols] = -1
-    #     count += 1
-    #     if count >= 2 and quantum_moves:
-            
-    #         x_turn = True
-    #         count = 0
-    #     elif not quantum_moves:
-    #         x_turn = True
-
-
 
 
 
@@ -192,9 +175,11 @@ recent_moves = []
 running = True
 x_turn = True
 count = 0
-total_count = 0
 is_collapse = False
 quantum_moves = True
+total_quantum_moves = 0
+
+cnot_qubits = []
 
 while running:
     for event in pygame.event.get():
@@ -208,7 +193,8 @@ while running:
             cols = mouse_x // (WIDTH // GRID_SIZE)
             rows = mouse_y // (HEIGHT // GRID_SIZE)
             recent_moves.append([rows, cols])
-            total_count += 1
+            
+            
 
 
             if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
@@ -220,21 +206,23 @@ while running:
             #         x_turn = True
 
                         # if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
-                print("This is is_collapse", quantum_moves)
-                x_turn, count = before_collapse(board_coordinate, rows, cols, quantum_moves, x_turn, count)
+                x_turn, count,board_coordinate = before_collapse(board_coordinate, rows, cols, quantum_moves, x_turn, count)
 
-                
                 if len(recent_moves) == 2:
-                    quanutum_game(circuit, recent_moves)
-                
+                    cnot_qubits.append(recent_moves)
+                    circuit, recent_moves = quanutum_game(circuit, recent_moves)
+
 
             
-                elif check_complete_fill(board_coordinate):
+                if check_complete_fill(board_coordinate):
                     if not is_collapse:
-                        is_collapse, quantum_moves, x_turn, recent_moves, total_count = collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, total_count)
+                        is_collapse, quantum_moves, x_turn= collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves)
+
+                    
 
 
                 if is_collapse:
+                    print("This is is_collapse", is_collapse)
                     winner=check_winner(board_coordinate)
                     if winner == 1:
                         print("X wins!")
@@ -243,7 +231,18 @@ while running:
                     elif winner == -1:
                         print("O wins!")
                         cprint("O wins!", 'blue')
+                    
+                    elif  check_complete_fill(board_coordinate):
+                        print("This is a Draw!")
 
+                print("BOARD COORDINATES", board_coordinate)
+                
+                # for i, instruction in enumerate(circuit.data):
+                #     if hasattr(instruction, 'operation') and hasattr(instruction.operation, 'name') and instruction.operation.name == 'cx':
+                #         qubits_connected = instruction.qubits
+                #         control_index = qubits_connected[0].index
+                #         target_index = qubits_connected[1].index
+                        
 
 
     # Clear the screen
@@ -253,9 +252,20 @@ while running:
 
         # running = False
 
+    # for i, instruction in enumerate(circuit.data):
+    #     if hasattr(instruction, 'operation') and hasattr(instruction.operation, 'name') and instruction.operation.name == 'cx':
+    #         qubits_connected = instruction.qubits
+    #         control_index = qubits_connected[0].index
+    #         target_index = qubits_connected[1].index
+    #         print(f"CNOT {control_index} -> {target_index}")
+            
     
     # quanutum_game(board_coordinates, circuit, x_turn)
-    draw_x_or_y(board_coordinate)
+    draw_x_or_y(board_coordinate, cnot_qubits)
+
+        
+
+
 
 
     # Update the display
