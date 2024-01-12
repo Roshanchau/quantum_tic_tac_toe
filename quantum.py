@@ -88,28 +88,42 @@ def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves):
     return is_collapse, quantum_moves, x_turn
 
 
-def draw_x_or_y(board_coordinates, quantum_moves_count):
+def draw_x_or_y(board_coordinates, is_collapse):
     font = pygame.font.Font('freesansbold.ttf', 60)
     colors_x = [(0, 255, 0), (0, 0, 255), (255, 0, 0)]
     colors_y = [(255, 0, 255), (255, 255, 0),(0, 255, 255)]
-    
     count_x = 0
     count_o = 0
+    dict_x = {}
     for row in range(3):
         for col in range(3):
             if board_coordinates[row][col] == 1:
-                # Most hard logic, 4 ghanta lagyo.😂😂
-                color_index = count_x // 2 % len(colors_x)
-                text = font.render("X", True, colors_x[color_index])
+                if is_collapse:
+                    text = font.render("X", True, (255,0,0))
+
+
+                else:
+                    # Most hard logic, 4 ghanta lagyo.😂😂
+                    color_index = count_x // 2 % len(colors_x)
+                    dict_x[color_index] = [row, col]
+                    text = font.render("X", True, colors_x[color_index])
+                    count_x += 1
+                    
                 text_rect = text.get_rect(center=(col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2, row * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2))
                 screen.blit(text, text_rect)
-                count_x += 1
+                
+                
             elif board_coordinates[row][col] == -1:
-                color_index = count_o // 2 % len(colors_y)
-                text = font.render("O", True, colors_y[color_index])
+                if is_collapse:
+                    text = font.render("O", True, (0,0,255))
+                else:
+                    color_index = count_o // 2 % len(colors_y)
+                    text = font.render("O", True, colors_y[color_index])
+                    count_o += 1
                 text_rect = text.get_rect(center=(col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2, row * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2))
                 screen.blit(text, text_rect)
-                count_o += 1
+
+
 
 
 def check_winner(board_coordinates):
@@ -177,9 +191,6 @@ x_turn = True
 count = 0
 is_collapse = False
 quantum_moves = True
-total_quantum_moves = 0
-
-cnot_qubits = []
 
 while running:
     for event in pygame.event.get():
@@ -209,7 +220,6 @@ while running:
                 x_turn, count,board_coordinate = before_collapse(board_coordinate, rows, cols, quantum_moves, x_turn, count)
 
                 if len(recent_moves) == 2:
-                    cnot_qubits.append(recent_moves)
                     circuit, recent_moves = quanutum_game(circuit, recent_moves)
 
 
@@ -261,7 +271,7 @@ while running:
             
     
     # quanutum_game(board_coordinates, circuit, x_turn)
-    draw_x_or_y(board_coordinate, cnot_qubits)
+    draw_x_or_y(board_coordinate, is_collapse)
 
         
 
