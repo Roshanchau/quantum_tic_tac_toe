@@ -3,7 +3,7 @@ import json
 from qiskit import *
 import qiskit
 from qiskit.tools.monitor import job_monitor
-
+import copy
 import pygame
 
 # Initialize Pygame
@@ -29,6 +29,7 @@ WHITE = (255,255,255)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("3x3 Grid")
 
+previous_board_coordinates = [[0,0,0] for i in range(3)]
 def draw_grid():
     # Draw vertical lines
     for i in range(1, GRID_SIZE):
@@ -62,7 +63,7 @@ def quanutum_game(circuit,recent_moves):
     return circuit, recent_moves
 
 
-def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves):
+def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, board_coordinate):
     is_collapse = True
     quantum_moves = False
     if recent_moves:
@@ -85,9 +86,10 @@ def collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves):
     for i in range(9):  
         circuit.reset(i)
 
+                
+
     for i,val in enumerate(string):
         if val == '0':
-            print("This is i", i)
             board_coordinate[i//3][i%3] = 0
 
     
@@ -187,6 +189,15 @@ def check_complete_fill(board_coordinates):
                 return False
     return True
 
+def draw_circuit(board_coordinate):
+    global previous_board_coordinates
+    for inx, row in enumerate(board_coordinate):
+        for j, i in enumerate(row):
+            if i != 0 and previous_board_coordinates[inx][j] == 0:
+                circuit.x(inx*3 + j)
+    
+    print(circuit.draw())
+    previous_board_coordinates = copy.deepcopy(board_coordinate)
 
 
 board_coordinate = board_coordinates()
@@ -235,7 +246,7 @@ while running:
                         # if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
                 x_turn, count,board_coordinate = before_collapse(board_coordinate, rows, cols, quantum_moves, x_turn, count)
 
-                if len(recent_moves) == 2:
+                if len(recent_moves) == 2 and not is_collapse:
                     print()
                     circuit, recent_moves = quanutum_game(circuit, recent_moves)
 
@@ -243,13 +254,14 @@ while running:
             
                 if check_complete_fill(board_coordinate):
                     if not is_collapse:
-                        is_collapse, quantum_moves, x_turn= collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves)
+                        is_collapse, quantum_moves, x_turn= collapse(circuit, is_collapse, quantum_moves, x_turn, recent_moves, board_coordinate)
 
                     
 
 
                 if is_collapse:
-                    print("This is is_collapse", is_collapse)
+                    draw_circuit(board_coordinate)
+
                     
                     winner=check_winner(board_coordinate)
                     if winner == 1:
