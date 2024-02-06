@@ -273,7 +273,6 @@ while running:
                         cprint("O wins!", 'blue')
                     
                     elif  check_complete_fill(board_coordinate):
-                        print("This is a Draw!" )
                         cprint("This is a Draw!" ,'green')
 
                 print("BOARD COORDINATES", board_coordinate)
