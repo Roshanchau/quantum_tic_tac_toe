@@ -13,7 +13,7 @@ pygame.init()
 WIDTH, HEIGHT = 300, 300
 LINE_COLOR = (255, 255, 255)
 LINE_WIDTH = 5
-GRID_SIZE = 3
+GRID_SIZE = 3 
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -40,7 +40,7 @@ def draw_grid():
         pygame.draw.line(screen, LINE_COLOR, (0, i * HEIGHT // GRID_SIZE), (WIDTH, i * HEIGHT // GRID_SIZE), LINE_WIDTH)
 
 def board_coordinates():
-    return [[0,0,0] for i in range(3)]
+    return [[0,0,0] for i in range(3)] 
 
 
 def quanutum_game(circuit,recent_moves):
@@ -106,7 +106,7 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
     dict_x = {}
 
     for i, coordinate in enumerate(coordinate_of_moves):
-        dict_x[tuple(coordinate)] = colors[i//2] 
+        dict_x[tuple(coordinate)] = colors[i//2]
 
     
     for row in range(3):
@@ -192,7 +192,7 @@ def check_complete_fill(board_coordinates):
 def draw_circuit(board_coordinate):
     global previous_board_coordinates
     for inx, row in enumerate(board_coordinate):
-        for j, i in enumerate(row):
+        for j, i in enumerate(row): 
             if i != 0 and previous_board_coordinates[inx][j] == 0:
                 circuit.x(inx*3 + j)
     
@@ -273,7 +273,8 @@ while running:
                         cprint("O wins!", 'blue')
                     
                     elif  check_complete_fill(board_coordinate):
-                        print("This is a Draw!")
+                        print("This is a Draw!" )
+                        cprint("This is a Draw!" ,'green')
 
                 print("BOARD COORDINATES", board_coordinate)
                 
