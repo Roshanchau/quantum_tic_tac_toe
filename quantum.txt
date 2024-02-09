@@ -1,0 +1,32 @@
+In the context of Quantum Tic Tac Toe, this circuit could represent 
+a quantum move involving two squares (represented by the two qubits).
+ The Hadamard gate puts the first square into a superposition of being 
+ both X and O, the X gates flip the state of both squares, and the CNOT
+  gate entangles the two squares. The actual interpretation may vary 
+  depending on the specific rules and representation used in your
+ Quantum Tic Tac Toe game.
+
+
+Quantum Tic-Tac-Toe is a variation of the classic Tic-Tac-Toe game that incorporates principles from quantum computing. In this version, 
+players can use quantum superposition and entanglement to make the game more complex and strategic. Let's discuss the roles of the Hadamard 
+gate and CNOT gate in the context of quantum computing and how they apply to Quantum Tic-Tac-Toe:
+
+Hadamard Gate (H gate):
+
+Function: The Hadamard gate is a fundamental quantum gate that creates superposition.
+Application in Quantum Tic-Tac-Toe: When a player places an X on the board using the Hadamard gate, it allows the X to exist
+ in a superposition of both states (e.g., in two positions simultaneously). This means that the X is not definitively 
+ in one spot until measured. The Hadamard gate introduces an element of uncertainty and strategy into the game, as the
+  opponent won't know the exact position of the X until they make a measurement.
+CNOT Gate (Controlled-NOT gate):
+
+Function: The CNOT gate is a two-qubit gate that entangles two qubits.
+Application in Quantum Tic-Tac-Toe: When an O is placed on the board using the CNOT gate, it can be entangled
+ with the X already on the board. Entanglement means that the states of the X and O are now correlated, and the
+  measurement of one qubit affects the measurement of the other. This introduces a level of connection between 
+  the Xs and Os, making the game more complex. The CNOT gate is typically used to create entanglement between
+   qubits in quantum algorithms.
+In summary, the Hadamard gate is used by the X player to introduce superposition, allowing for the X to be in multiple
+ positions at once. The CNOT gate is used by the O player to entangle the O with the existing X, creating a connection
+  between them. These quantum gates add a layer of quantum mechanics to the classical Tic-Tac-Toe game, making it more 
+  intricate and strategic.
