@@ -86,6 +86,8 @@ def collapse(
 ):
     is_collapse = True
     quantum_moves = False
+    c1_flag = False
+
 
     if recent_moves:
         circuit.x(recent_moves[0][0] * 3 + recent_moves[0][1])
@@ -105,9 +107,11 @@ def collapse(
     string = list(string)
     if entanglement_:
         connected = connected_qubits_with_entanglement(history_of_moves, entanglement_coordinates)
+
         
         
         for c1,c2,c3 in connected:
+                
             c1 = c1[0]*3 + c1[1]
             c2 = c2[0]*3 + c2[1]
             c3 = c3[0]*3 + c3[1]
@@ -116,13 +120,51 @@ def collapse(
         
 
             c_1, c_2, c_3 = entanglement()
-
+            print("This is c_1, c_2, c_3", c_1, c_2, c_3)
             string[c1] = c_1
             string[c2] = c_2
             string[c3] = c_3
+            # if c1 == 1 or c3 == 1:
+            #     board_coordinate[c1//3][c1%3] = c_1
+            #     board_coordinate[c3//3][c3%3] = c_3
+            if c1 == 1:
+                c1_flag = True
+            if c3 == 1:
+                c1_flag = False
+            
+            if c1 == 0:
+                board_coordinate[c1//3][c1%3] = 0
+            elif c2 == 0:
+                board_coordinate[c2//3][c2%3] = 0
+            elif c3 == 0:
+                board_coordinate[c3//3][c3%3] = 0
+
+            
+
+            if board_coordinate[c2//3][c2%3] != 0:
+                if c1_flag:
+                    board_coordinate[c2//3][c2%3] = -1
+                else:
+                    board_coordinate[c2//3][c2%3] = 1
+
+
+
+
+
+
+            
+
+
+ 
+            
+
+
+
+        
 
     # convert list to string
     string = "".join(string)
+    
 
     print("This is fucking string", string)
     # reset the circuit
