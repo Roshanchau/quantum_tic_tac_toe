@@ -87,6 +87,7 @@ def collapse(
     is_collapse = True
     quantum_moves = False
     c1_flag = False
+    c3_flag = False
 
 
     if recent_moves:
@@ -118,7 +119,7 @@ def collapse(
         
             print("This is c1, c2, c3", c1, c2, c3)
         
-
+            # there are the value in 1 and 0 
             c_1, c_2, c_3 = entanglement()
             print("This is c_1, c_2, c_3", c_1, c_2, c_3)
             string[c1] = c_1
@@ -127,25 +128,31 @@ def collapse(
             # if c1 == 1 or c3 == 1:
             #     board_coordinate[c1//3][c1%3] = c_1
             #     board_coordinate[c3//3][c3%3] = c_3
-            if c1 == 1:
-                c1_flag = True
-            if c3 == 1:
-                c1_flag = False
             
-            if c1 == 0:
+            if c_1 == 0:
                 board_coordinate[c1//3][c1%3] = 0
-            elif c2 == 0:
+            elif c_2 == 0:
                 board_coordinate[c2//3][c2%3] = 0
-            elif c3 == 0:
+            elif c_3 == 0:
                 board_coordinate[c3//3][c3%3] = 0
 
+            if c_1 == "1":
+                c1_flag = True
+            if c_3 == "1":
+                c3_flag = True
             
 
-            if board_coordinate[c2//3][c2%3] != 0:
+            if c_2 == "1":
+                print("I am under c_2")
                 if c1_flag:
-                    board_coordinate[c2//3][c2%3] = -1
-                else:
-                    board_coordinate[c2//3][c2%3] = 1
+                    print("This is c1_flag", c1_flag)
+                    board_coordinate[c2//3][c2%3] = -board_coordinate[c1//3][c1%3]
+                elif c3_flag:
+                    print("This is c1_flag off", c3_flag)
+                    board_coordinate[c2//3][c2%3] = -board_coordinate[c3//3][c3%3]
+
+            c1_flag = False
+            c3_flag = False
 
 
 
