@@ -24,8 +24,6 @@ MAGENTA = (255, 0, 255)
 WHITE = (255, 255, 255)
 
 
-
-
 # Set up the display window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("3x3 Grid")
@@ -33,7 +31,6 @@ pygame.display.set_caption("3x3 Grid")
 previous_board_coordinates = [[0, 0, 0] for i in range(3)]
 
 previous_board_coordinate = [[0, 0, 0] for i in range(3)]
-
 
 
 def draw_grid():
@@ -60,6 +57,7 @@ def draw_grid():
 
 def board_coordinates():
     return [[0, 0, 0] for i in range(3)]
+
 
 # This function will add the hamard gate, x gate and cnot gate to the circuit
 def quantum_game(circuit, recent_moves):
@@ -89,7 +87,6 @@ def collapse(
     c1_flag = False
     c3_flag = False
 
-
     if recent_moves:
         circuit.x(recent_moves[0][0] * 3 + recent_moves[0][1])
     x_turn = False
@@ -107,19 +104,19 @@ def collapse(
     # convert string to list
     string = list(string)
     if entanglement_:
-        connected = connected_qubits_with_entanglement(history_of_moves, entanglement_coordinates)
+        connected = connected_qubits_with_entanglement(
+            history_of_moves, entanglement_coordinates
+        )
 
-        
-        
-        for c1,c2,c3 in connected:
-                
-            c1 = c1[0]*3 + c1[1]
-            c2 = c2[0]*3 + c2[1]
-            c3 = c3[0]*3 + c3[1]
-        
+        for c1, c2, c3 in connected:
+
+            c1 = c1[0] * 3 + c1[1]
+            c2 = c2[0] * 3 + c2[1]
+            c3 = c3[0] * 3 + c3[1]
+
             print("This is c1, c2, c3", c1, c2, c3)
-        
-            # there are the value in 1 and 0 
+
+            # there are the value in 1 and 0
             c_1, c_2, c_3 = entanglement()
             print("This is c_1, c_2, c_3", c_1, c_2, c_3)
             string[c1] = c_1
@@ -128,50 +125,37 @@ def collapse(
             # if c1 == 1 or c3 == 1:
             #     board_coordinate[c1//3][c1%3] = c_1
             #     board_coordinate[c3//3][c3%3] = c_3
-            
+
             if c_1 == 0:
-                board_coordinate[c1//3][c1%3] = 0
+                board_coordinate[c1 // 3][c1 % 3] = 0
             elif c_2 == 0:
-                board_coordinate[c2//3][c2%3] = 0
+                board_coordinate[c2 // 3][c2 % 3] = 0
             elif c_3 == 0:
-                board_coordinate[c3//3][c3%3] = 0
+                board_coordinate[c3 // 3][c3 % 3] = 0
 
             if c_1 == "1":
                 c1_flag = True
             if c_3 == "1":
                 c3_flag = True
-            
 
             if c_2 == "1":
                 print("I am under c_2")
                 if c1_flag:
                     print("This is c1_flag", c1_flag)
-                    board_coordinate[c2//3][c2%3] = -board_coordinate[c1//3][c1%3]
+                    board_coordinate[c2 // 3][c2 % 3] = -board_coordinate[c1 // 3][
+                        c1 % 3
+                    ]
                 elif c3_flag:
                     print("This is c1_flag off", c3_flag)
-                    board_coordinate[c2//3][c2%3] = -board_coordinate[c3//3][c3%3]
+                    board_coordinate[c2 // 3][c2 % 3] = -board_coordinate[c3 // 3][
+                        c3 % 3
+                    ]
 
             c1_flag = False
             c3_flag = False
 
-
-
-
-
-
-            
-
-
- 
-            
-
-
-
-        
-
     # convert list to string
     string = "".join(string)
-    
 
     print("This is fucking string", string)
     # reset the circuit
@@ -190,7 +174,7 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
     font = pygame.font.Font("freesansbold.ttf", 60)
     colors = [GREEN, YELLOW, CYAN, MAGENTA, RED, BLUE, WHITE]
     dict_x = {}
-    
+
     for i, coordinate in enumerate(coordinate_of_moves):
         dict_x[tuple(coordinate)] = colors[i // 2]
 
@@ -338,8 +322,6 @@ def draw_circuit(board_coordinate):
     print("This is previous_board_coordinates", previous_board_coordinates)
 
 
-
-
 def entanglement():
     required_states = ["011", "101", "110"]
     qc = QuantumCircuit(3, 3)
@@ -367,7 +349,7 @@ def mark_entanglement(board_coordinate, row, column, previous_board_coordinate):
         entanglement_ = True
         entanglement_coordinates.append([row, column])
         print("This is entanglement_position", entanglement_coordinates)
-    
+
 
 def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinates):
     connected = []
@@ -389,21 +371,16 @@ def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinate
         if [] in new_connected:
             new_connected.remove([])
 
-
-
-
-    
-    
     print("This is connected", new_connected)
     return new_connected
 
-
     # return connected
+
 
 # class QuantumEntanglement:
 #     def __init__(self):
 #         self.entanglement_coordinates = []
-        
+
 #     def entanglement(self, board_coordinate):
 #         required_states = ["011", "101", "110"]
 #         qc = QuantumCircuit(3, 3)
@@ -423,12 +400,12 @@ def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinate
 #             if string in required_states:
 #                 break
 #         return string
-    
+
 #     def mark_entanglement(self, board_coordinate, row, column, previous_board_coordinate):
 #         if board_coordinate[row][column] * previous_board_coordinate[row][column] == -1:
 #             self.entanglement_coordinates.append([row, column])
 #             print("This is entanglement_position", self.entanglement_coordinates)
-        
+
 #     def connected_qubits_with_entanglement(self, history_of_moves, entanglement_coordinates):
 #         connected = []
 #         for i, coordinate in enumerate(history_of_moves):
@@ -446,25 +423,10 @@ def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinate
 #                 # connected.append(coordinate)
 #         print("This is connected", connected)
 #         return connected
-    
-    
-
-            
 
 
-            
+# circuit.cx(row * 3 + column, row * 3 + column)
 
-
-
-
-
-
-
-
-
-    
-        # circuit.cx(row * 3 + column, row * 3 + column)
-    
 # def connected_qubits(circuit, qubit):
 #     connected = set()
 #     for gate in circuit.data:
@@ -475,30 +437,28 @@ def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinate
 
 #     return connected
 
-    
 
+#     for i in range(3):
+#         for j in range(3):
+#             if board_coordinate[i][j] == 1:
+#                 qc.x(i*3 + j)
+#     qc.measure([0,1,2], [0,1,2])
+#     simulator = qiskit.Aer.get_backend('qasm_simulator')
+#     job = qiskit.execute(qc, simulator, shots=1)
+#     result = job.result()
+#     out = json.dumps(result.get_counts())
+#     string = out[2:11]
+#     string = string[::-1]
+#     print(string)
+#     if string in required_states:
+#         break
+#     else:
+#         for i in range(3):
+#             for j in range(3):
+#                 if board_coordinate[i][j] == 1:
+#                     qc.x(i*3 + j)
 
-    #     for i in range(3):
-    #         for j in range(3):
-    #             if board_coordinate[i][j] == 1:
-    #                 qc.x(i*3 + j)
-    #     qc.measure([0,1,2], [0,1,2])
-    #     simulator = qiskit.Aer.get_backend('qasm_simulator')
-    #     job = qiskit.execute(qc, simulator, shots=1)
-    #     result = job.result()
-    #     out = json.dumps(result.get_counts())
-    #     string = out[2:11]
-    #     string = string[::-1]
-    #     print(string)
-    #     if string in required_states:
-    #         break
-    #     else:
-    #         for i in range(3):
-    #             for j in range(3):
-    #                 if board_coordinate[i][j] == 1:
-    #                     qc.x(i*3 + j)
-
-    # return qc
+# return qc
 
 
 board_coordinate = board_coordinates()
@@ -522,26 +482,25 @@ entanglement_coordinates = []
 entanglement_ = False
 
 
-
-
 draw_grid()
 pygame.display.flip()
-
-
 
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        
+        
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             cols = mouse_x // (WIDTH // GRID_SIZE)
             rows = mouse_y // (HEIGHT // GRID_SIZE)
-            
 
             if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
+                screen.fill((0, 0, 0))
+                draw_grid()
                 recent_moves.append([rows, cols])
                 history_of_moves.append([rows, cols])
                 if not is_collapse:
@@ -561,6 +520,10 @@ while running:
                 if len(recent_moves) == 2 and not is_collapse:
                     print()
                     circuit, recent_moves = quantum_game(circuit, recent_moves)
+                
+                print("Fuck you", board_coordinate)
+
+                draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
 
                 if check_complete_fill(board_coordinate):
                     if not is_collapse:
@@ -571,12 +534,19 @@ while running:
                             x_turn,
                             recent_moves,
                             board_coordinate,
+                    
                         )
+                    pygame.display.flip()
+                    screen.fill((0, 0, 0))
+                    draw_grid()
+                        
+                    draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                    print("Love you", board_coordinate)
+
 
                 if is_collapse:
                     draw_circuit(board_coordinate)
                     # connected = connected_qubits_with_entanglement(history_of_moves, entanglement_coordinates)
-                
 
                     winner = check_winner(board_coordinate)
                     if winner == 1:
@@ -593,31 +563,30 @@ while running:
                 print("BOARD COORDINATES", board_coordinate)
                 # print("previous_board_coordinates", previous_board_coordinates)
 
-
-
-
                 # for i, instruction in enumerate(circuit.data):
                 #     if hasattr(instruction, 'operation') and hasattr(instruction.operation, 'name') and instruction.operation.name == 'cx':
                 #         qubits_connected = instruction.qubits
                 #         control_index = qubits_connected[0].index
                 #         target_index = qubits_connected[1].index
 
-                                # Clear the screen
-                mark_entanglement(board_coordinate, rows, cols, previous_board_coordinate)
-                
-                screen.fill((0, 0, 0))
-                draw_grid()
+                # Clear the screen
+                mark_entanglement(
+                    board_coordinate, rows, cols, previous_board_coordinate
+                )
+
                 previous_board_coordinate = copy.deepcopy(board_coordinate)
 
                 # quanutum_game(board_coordinates, circuit, x_turn)
-                draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                
 
                 # Update the display
                 pygame.display.flip()
-    
-                
-            
         
+
+
+            
+    
+
 
 
 # Quit Pygame
