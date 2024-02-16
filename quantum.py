@@ -86,10 +86,11 @@ def collapse(
     quantum_moves = False
     c1_flag = False
     c3_flag = False
+    x_turn = not x_turn if recent_moves else x_turn
 
     if recent_moves:
         circuit.x(recent_moves[0][0] * 3 + recent_moves[0][1])
-    x_turn = False
+    # x_turn = not x_turn
     recent_moves.clear()
     circuit.measure([0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8])
     print(circuit.draw())
@@ -178,8 +179,6 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
 
     for i, coordinate in enumerate(coordinate_of_moves):
         dict_x[tuple(coordinate)] = colors[i // 2]
-    
-    
 
     for row in range(3):
         for col in range(3):
@@ -202,9 +201,6 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
             else:
                 continue
 
-
-
-
             text_rect = text.get_rect(
                 center=(
                     col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2,
@@ -214,29 +210,29 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
             screen.blit(text, text_rect)
 
     if is_collapse == False:
-        for [x,y] in entanglement_coordinates:
+        for [x, y] in entanglement_coordinates:
             # Here it should remove the X or Y blit for [x,y] coordinates
             print("Here i am")
             # First, blit a rectangle of the background color over the X or Y
             background_color = (0, 0, 0)  # Replace with your background color
             rect = pygame.Rect(
-                y * WIDTH // GRID_SIZE+ LINE_WIDTH//2,
-                x * HEIGHT // GRID_SIZE+ LINE_WIDTH//2,
-                WIDTH // GRID_SIZE-LINE_WIDTH,
-                HEIGHT // GRID_SIZE-LINE_WIDTH,
+                y * WIDTH // GRID_SIZE + LINE_WIDTH // 2,
+                x * HEIGHT // GRID_SIZE + LINE_WIDTH // 2,
+                WIDTH // GRID_SIZE - LINE_WIDTH,
+                HEIGHT // GRID_SIZE - LINE_WIDTH,
             )
             pygame.draw.rect(screen, background_color, rect)
             # Then blit the "Q" as before
-            text_color = (255,0,0) 
+            text_color = (255, 0, 0)
             text = font.render("Q", True, text_color)
-            text_rect = text.get_rect(center=(
-                y * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2,
-                x * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2,))
+            text_rect = text.get_rect(
+                center=(
+                    y * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2,
+                    x * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2,
+                )
+            )
             print("This is the text center", text_rect.center)
             screen.blit(text, text_rect)
-
-
-
 
 
 def check_winner(board_coordinates):
@@ -521,8 +517,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
-        
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -551,21 +545,18 @@ while running:
                 if len(recent_moves) == 2 and not is_collapse:
                     print()
                     circuit, recent_moves = quantum_game(circuit, recent_moves)
-                
-                print("Fuck you", board_coordinate)
 
+                print("This is X_turn", x_turn)
 
                 if check_complete_fill(board_coordinate) and not is_collapse:
                     draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
                     pygame.display.flip()
-                    
-                    print("This is the non final board_coordinates", board_coordinate)
 
+                    print("This is the non final board_coordinates", board_coordinate)
 
                     pygame.time.delay(1000)
 
                     screen.fill((0, 0, 0))
-
 
                     draw_grid()
 
@@ -577,22 +568,17 @@ while running:
                             x_turn,
                             recent_moves,
                             board_coordinate,
-                    
                         )
+                    print("THis is x_turn", x_turn)
                     print("This is the final board_coordinates", board_coordinate)
-                    
-                        
-                    # wait for 1 second 
+
+                    # wait for 1 second
                     # wait for 10 second
-                
 
                     # pygame.display.flip()
                     # draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
 
-
-
                     print("Love you", board_coordinate)
-
 
                 if is_collapse:
                     draw_circuit(board_coordinate)
@@ -628,19 +614,10 @@ while running:
 
                 # quanutum_game(board_coordinates, circuit, x_turn)
 
-
                 draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
-
-
 
                 # Update the display
                 pygame.display.flip()
-        
-
-
-            
-    
-
 
 
 # Quit Pygame
