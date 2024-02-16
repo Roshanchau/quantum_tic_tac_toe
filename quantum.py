@@ -174,12 +174,16 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
     font = pygame.font.Font("freesansbold.ttf", 60)
     colors = [GREEN, YELLOW, CYAN, MAGENTA, RED, BLUE, WHITE]
     dict_x = {}
+    print("This is entanglement_coordinates", entanglement_coordinates)
 
     for i, coordinate in enumerate(coordinate_of_moves):
         dict_x[tuple(coordinate)] = colors[i // 2]
+    
+    
 
     for row in range(3):
         for col in range(3):
+
             if board_coordinates[row][col] == 1:
                 if is_collapse:
                     text_color = (255, 0, 0)
@@ -198,6 +202,9 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
             else:
                 continue
 
+
+
+
             text_rect = text.get_rect(
                 center=(
                     col * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2,
@@ -205,7 +212,31 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
                 )
             )
             screen.blit(text, text_rect)
-    print("This is dict_x", dict_x)
+
+    if is_collapse == False:
+        for [x,y] in entanglement_coordinates:
+            # Here it should remove the X or Y blit for [x,y] coordinates
+            print("Here i am")
+            # First, blit a rectangle of the background color over the X or Y
+            background_color = (0, 0, 0)  # Replace with your background color
+            rect = pygame.Rect(
+                y * WIDTH // GRID_SIZE+ LINE_WIDTH//2,
+                x * HEIGHT // GRID_SIZE+ LINE_WIDTH//2,
+                WIDTH // GRID_SIZE-LINE_WIDTH,
+                HEIGHT // GRID_SIZE-LINE_WIDTH,
+            )
+            pygame.draw.rect(screen, background_color, rect)
+            # Then blit the "Q" as before
+            text_color = (255,0,0) 
+            text = font.render("Q", True, text_color)
+            text_rect = text.get_rect(center=(
+                y * WIDTH // GRID_SIZE + WIDTH // GRID_SIZE // 2,
+                x * HEIGHT // GRID_SIZE + HEIGHT // GRID_SIZE // 2,))
+            print("This is the text center", text_rect.center)
+            screen.blit(text, text_rect)
+
+
+
 
 
 def check_winner(board_coordinates):
@@ -523,9 +554,21 @@ while running:
                 
                 print("Fuck you", board_coordinate)
 
-                draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
 
-                if check_complete_fill(board_coordinate):
+                if check_complete_fill(board_coordinate) and not is_collapse:
+                    draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                    pygame.display.flip()
+                    
+                    print("This is the non final board_coordinates", board_coordinate)
+
+
+                    pygame.time.delay(1000)
+
+                    screen.fill((0, 0, 0))
+
+
+                    draw_grid()
+
                     if not is_collapse:
                         is_collapse, quantum_moves, x_turn = collapse(
                             circuit,
@@ -536,11 +579,18 @@ while running:
                             board_coordinate,
                     
                         )
-                    pygame.display.flip()
-                    screen.fill((0, 0, 0))
-                    draw_grid()
+                    print("This is the final board_coordinates", board_coordinate)
+                    
                         
-                    draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                    # wait for 1 second 
+                    # wait for 10 second
+                
+
+                    # pygame.display.flip()
+                    # draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+
+
+
                     print("Love you", board_coordinate)
 
 
@@ -577,7 +627,11 @@ while running:
                 previous_board_coordinate = copy.deepcopy(board_coordinate)
 
                 # quanutum_game(board_coordinates, circuit, x_turn)
-                
+
+
+                draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+
+
 
                 # Update the display
                 pygame.display.flip()
