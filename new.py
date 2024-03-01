@@ -158,7 +158,7 @@ def collapse(
     # convert list to string
     string = "".join(string)
 
-    print("This is fucking string", string)
+    print("This is  string", string)
     # reset the circuit
     for i in range(9):
         circuit.reset(i)

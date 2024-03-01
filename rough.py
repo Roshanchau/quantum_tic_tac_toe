@@ -3,7 +3,7 @@
                 print("AI's turn")
                 
                 best_moves, board_coordinate = ai_make_move(board_coordinate, is_collapse)
-                # print("Fuck", board_coordinate)
+                # print("", board_coordinate)
                 # board_coordinate[row][col] = -1
 
                 recent_moves.extend(best_moves)
