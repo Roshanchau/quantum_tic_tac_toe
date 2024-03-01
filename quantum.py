@@ -157,7 +157,7 @@ def collapse(
     # convert list to string
     string = "".join(string)
 
-    print("This is fucking string", string)
+    print("This is string", string)
     # reset the circuit
     for i in range(9):
         circuit.reset(i)
@@ -592,7 +592,7 @@ def play_with_ai():
                 print("AI's turn")
                 
                 best_moves, board_coordinate = ai_make_move(board_coordinate, is_collapse)
-                print("Fuck", board_coordinate)
+                print("hehe", board_coordinate)
                 # board_coordinate[row][col] = -1
 
                 recent_moves.extend(best_moves)
@@ -778,6 +778,7 @@ def main():
 
     pygame.display.flip()
     while True:
+        pygame.init()
 
         # Draw the title text
 
