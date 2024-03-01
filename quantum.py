@@ -11,7 +11,8 @@ import random
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 300, 300
+WIDTH_B, HEIGHT_B = 400, 660
+WIDTH, HEIGHT = 400, 400
 LINE_COLOR = (255, 255, 255)
 LINE_WIDTH = 5
 GRID_SIZE = 3
@@ -25,7 +26,7 @@ MAGENTA = (255, 0, 255)
 WHITE = (255, 255, 255)
 
 # Set up the display window
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH_B, HEIGHT_B))
 pygame.display.set_caption("3x3 Grid")
 
 previous_board_coordinates = [[0, 0, 0] for i in range(3)]
@@ -45,7 +46,7 @@ def draw_grid():
         )
 
     # Draw horizontal lines
-    for i in range(1, GRID_SIZE):
+    for i in range(1, GRID_SIZE+1):
         pygame.draw.line(
             screen,
             LINE_COLOR,
@@ -484,6 +485,49 @@ def alphabeta_pruning(board, depth, is_maximizing, alpha, beta):
 #                 available_moves.append((row, col))
 #     return random.choice(available_moves)
 
+def display_winner(winner, draw):
+    font = pygame.font.Font("freesansbold.ttf", 32)
+    text = None
+    if winner == 1:
+        text = font.render("X wins!", True, (255, 255, 255))
+    elif winner == -1:
+        text = font.render("O wins!", True, (255, 255, 255))
+    elif draw:
+        text = font.render("Draw!", True, (255, 255, 255))
+    if text:
+        text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(text, text_rect)
+
+def current_turn(x_turn):
+    font = pygame.font.Font("freesansbold.ttf", 32)
+    if x_turn:
+        text = "X"
+        color = (255, 0, 0)
+    else:
+        text = "O"
+        color = (0, 0, 255)
+    # turn_text = font.render(f"Current turn:", True, (255, 255, 255))  # White for "Current turn"
+    # text = font.render(text, True, color)
+    # turn_text_rect = turn_text.get_rect(center=(WIDTH//2 - 50, HEIGHT + 60))
+    # text_rect = text.get_rect(center=(WIDTH//2 + 50, HEIGHT + 60))
+    # screen.blit(turn_text, turn_text_rect)
+    # screen.blit(text, text_rect)
+    COLOR = (160,32,240)
+    rect = pygame.draw.rect(screen, COLOR,(50, HEIGHT + 50, WIDTH-100, 50), border_radius=10)
+    # find the center of the rect
+    center = rect.center
+    turn_text = font.render(f"Current turn:", True, (255, 255, 255))  # White for "Current turn"
+    text = font.render(text, True, color)
+    turn_text_rect = turn_text.get_rect(center=center)
+    text_rect = text.get_rect(center=(center[0] + 120, center[1]))
+    screen.blit(turn_text, turn_text_rect)
+    screen.blit(text, text_rect)
+    
+
+
+
+
+
 
 def play_with_ai():
     global board_coordinate, circuit, recent_moves, x_turn, count, is_collapse, quantum_moves, history_of_moves, entanglement_coordinates, entanglement_
@@ -567,8 +611,15 @@ def play_with_ai():
                             draw_circuit(board_coordinate)
                             winner = check_winner(board_coordinate)
                             if winner == 1:
+                                draw_winner()
                                 print("X wins!")
                                 cprint("X wins!", "red")
+
+                                
+
+                                
+
+                                
                             elif winner == -1:
                                 print("O wins!")
                                 cprint("O wins!", "blue")
@@ -687,6 +738,7 @@ def play_with_players():
                 cols = mouse_x // (WIDTH // GRID_SIZE)
                 rows = mouse_y // (HEIGHT // GRID_SIZE)
                 print("This is rows and cols", rows, cols)
+
                 
 
                 if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
@@ -732,14 +784,18 @@ def play_with_players():
                     if is_collapse:
                         draw_circuit(board_coordinate)
                         winner = check_winner(board_coordinate)
-                        if winner == 1:
-                            print("X wins!")
-                            cprint("X wins!", "red")
-                        elif winner == -1:
-                            print("O wins!")
-                            cprint("O wins!", "blue")
-                        elif check_complete_fill(board_coordinate):
-                            print("This is a Draw!")
+                        # if winner == 1:
+                        #     print("X wins!")
+
+                        #     cprint("X wins!", "red")
+                        # elif winner == -1:
+                        #     print("O wins!")
+                        #     cprint("O wins!", "blue")
+                        display_winner(winner, check_draw(board_coordinate))
+                        
+                        
+                        # elif check_complete_fill(board_coordinate):
+                           
 
 
                     mark_entanglement(
@@ -749,6 +805,7 @@ def play_with_players():
 
                     draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
                     print("This is is collapse", is_collapse)
+                    current_turn(x_turn)
 
                     pygame.display.flip()
 
@@ -764,13 +821,13 @@ def main():
     # screen.blit(title_text, title_rect)
 
     # Draw the buttons
-    play_ai_button = pygame.Rect(50, 100, WIDTH - 100, 50)
+    play_ai_button = pygame.Rect(50, 100, WIDTH_B - 100, 50)
     play_ai_text = font.render("Play against AI", True, (255, 255, 255))
     play_ai_text_rect = play_ai_text.get_rect(center=play_ai_button.center)
     pygame.draw.rect(screen, (255, 0, 0), play_ai_button)
     screen.blit(play_ai_text, play_ai_text_rect)
 
-    play_2p_button = pygame.Rect(50, 200, WIDTH - 100, 50)
+    play_2p_button = pygame.Rect(50, 200, WIDTH_B - 100, 50)
     play_2p_text = font.render("Play with 2 Players", True, (255, 255, 255))
     play_2p_text_rect = play_2p_text.get_rect(center=play_2p_button.center)
     pygame.draw.rect(screen, (0, 255, 0), play_2p_button)
@@ -779,9 +836,7 @@ def main():
     pygame.display.flip()
     while True:
         pygame.init()
-
         # Draw the title text
-
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
