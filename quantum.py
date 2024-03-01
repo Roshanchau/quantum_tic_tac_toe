@@ -5,6 +5,7 @@ import qiskit
 from qiskit.tools.monitor import job_monitor
 import copy
 import pygame
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -22,7 +23,6 @@ YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 WHITE = (255, 255, 255)
-
 
 # Set up the display window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -101,14 +101,13 @@ def collapse(
     string = out[2:11]
     # reverse the string
     string = string[::-1]
-    print(string)
+    print("This is string", string)
     # convert string to list
     string = list(string)
     if entanglement_:
         connected = connected_qubits_with_entanglement(
             history_of_moves, entanglement_coordinates
         )
-
         for c1, c2, c3 in connected:
 
             c1 = c1[0] * 3 + c1[1]
@@ -177,8 +176,14 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
     dict_x = {}
     print("This is entanglement_coordinates", entanglement_coordinates)
 
+    print("This is the coordinate_of_moves", coordinate_of_moves)
+
     for i, coordinate in enumerate(coordinate_of_moves):
         dict_x[tuple(coordinate)] = colors[i // 2]
+
+    print("This is dict_x", dict_x)
+
+
 
     for row in range(3):
         for col in range(3):
@@ -208,6 +213,7 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
                 )
             )
             screen.blit(text, text_rect)
+            
 
     if is_collapse == False:
         for [x, y] in entanglement_coordinates:
@@ -236,6 +242,7 @@ def draw_x_or_y(board_coordinates, is_collapse, coordinate_of_moves):
 
 
 def check_winner(board_coordinates):
+    print("This si check_winner", board_coordinates)
     # Check rows
     for row in range(3):
         if (
@@ -275,30 +282,6 @@ def check_winner(board_coordinates):
     return 0
 
 
-# def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count):
-#     """It will decide x_turn for the quantum moves or the normal moves"""
-#     count += 1
-#     print(count)
-#     if x_turn:
-#         board_coordinates[rows][cols] = 1
-#         if quantum_moves and count == 2:
-#             x_turn = False
-#             count = 0
-#         elif not quantum_moves:
-#             x_turn = False
-
-
-#     else:
-#         board_coordinates[rows][cols] = -1
-#         if quantum_moves and count == 2:
-#             x_turn = True
-#             count = 0
-#         elif not quantum_moves:
-#             x_turn = True
-
-#     return x_turn, count, board_coordinates
-
-
 def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count):
     # global previous_board_coordinates
     """It will decide x_turn for the quantum moves or the normal moves"""
@@ -306,18 +289,11 @@ def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count)
     print(count)
 
     if x_turn:
-        # if board_coordinates[rows][cols] == -1:
-        #     circuit.h(rows*3 + cols)
 
         board_coordinates[rows][cols] = 1
     else:
-        # if board_coordinates[rows][cols] == 1:
-        #     circuit.h(rows*3 + cols)
 
         board_coordinates[rows][cols] = -1
-
-    # if previous_board_coordinates[rows][cols] * board_coordinates[rows][cols] == -1:
-    #     circuit.cx(rows*3 + cols, rows*3 + cols)
 
     if (quantum_moves and count == 2) or not quantum_moves:
         x_turn = not x_turn
@@ -329,7 +305,7 @@ def before_collapse(board_coordinates, rows, cols, quantum_moves, x_turn, count)
 
 
 def check_complete_fill(board_coordinates):
-    print("This is board_coordinates", board_coordinates)
+    # print("This is board_coordinates", board_coordinates)
     for row in range(3):
         for col in range(3):
             if board_coordinates[row][col] == 0:
@@ -401,158 +377,237 @@ def connected_qubits_with_entanglement(history_of_moves, entanglement_coordinate
     print("This is connected", new_connected)
     return new_connected
 
-    # return connected
+
+def check_draw(board_coordinate):
+    for row in board_coordinate:
+        if 0 in row:
+            return False
+    return True
 
 
-# class QuantumEntanglement:
-#     def __init__(self):
-#         self.entanglement_coordinates = []
 
-#     def entanglement(self, board_coordinate):
-#         required_states = ["011", "101", "110"]
-#         qc = QuantumCircuit(3, 3)
-#         qc.h(0)
-#         qc.h(1)
-#         qc.h(2)
-#         while True:
-#             qc.measure([0, 1, 2], [0, 1, 2])
-#             simulator = qiskit.Aer.get_backend("qasm_simulator")
-#             job = qiskit.execute(qc, simulator, shots=1)
-#             result = job.result()
-#             out = json.dumps(result.get_counts())
-#             out = out[2:5]
-#             # reverse the string
-#             string = string[::-1]
-#             print(string)
-#             if string in required_states:
-#                 break
-#         return string
-
-#     def mark_entanglement(self, board_coordinate, row, column, previous_board_coordinate):
-#         if board_coordinate[row][column] * previous_board_coordinate[row][column] == -1:
-#             self.entanglement_coordinates.append([row, column])
-#             print("This is entanglement_position", self.entanglement_coordinates)
-
-#     def connected_qubits_with_entanglement(self, history_of_moves, entanglement_coordinates):
-#         connected = []
-#         for i, coordinate in enumerate(history_of_moves):
-#             if coordinate in entanglement_coordinates:
-#                 index_1 = i // 2
-#                 index_2 = i % 2
-#                 # change index_2 if 0 to 1 and if 1 to 0
-#                 if index_2 == 0:
-#                     index_2 = 1
-#                 else:
-#                     index_2 = 0
-#                 connected.append(history_of_moves[index_1*2+index_2])
-#                 if coordinate not in connected:
-#                     connected.append(coordinate)
-#                 # connected.append(coordinate)
-#         print("This is connected", connected)
-#         return connected
+def ai_make_move(board_coordinates, is_collapse):
+    if is_collapse:
+        ai_moves = 1
+    else:
+        ai_moves = 2
+    best_moves = []
+    
+    for k in range(ai_moves):
+        best_score = float("-inf")
+        best_move = None
+    
+        for i in range(3):
+            for j in range(3):
+                if board_coordinates[i][j] == 0:
+                    board_coordinates[i][j] = -1
+                    score = alphabeta_pruning(board_coordinates, 0, False, float("-inf"), float("inf"))
+                    board_coordinates[i][j] = 0
+                    if score > best_score:
+                        best_score = score
+                        best_move = (i, j)
+        board_coordinates[best_move[0]][best_move[1]] = -1
+        best_moves.append(best_move)
+        # print("This is the best move", best_move)
+        # best_moves.append(best_move)
+        # f = open("new.txt", "w")
+        # f.write(str(best_moves))
+        # f.close()
+        print("This is the best_moves", best_moves)
+        
+    return best_moves, board_coordinates
 
 
-# circuit.cx(row * 3 + column, row * 3 + column)
 
-# def connected_qubits(circuit, qubit):
-#     connected = set()
-#     for gate in circuit.data:
-#         if qubit in gate[1]:
-#             for q in gate[1]:
-#                 if q != qubit:
-#                     connected.add(q.index)
+def alphabeta_pruning(board, depth, is_maximizing, alpha, beta):
+    if check_winner(board) == -1:
+        return 1
+    elif check_winner(board) == 1:
+        return -1
+    elif check_complete_fill(board):
+        return 0
 
-#     return connected
-
-
-#     for i in range(3):
-#         for j in range(3):
-#             if board_coordinate[i][j] == 1:
-#                 qc.x(i*3 + j)
-#     qc.measure([0,1,2], [0,1,2])
-#     simulator = qiskit.Aer.get_backend('qasm_simulator')
-#     job = qiskit.execute(qc, simulator, shots=1)
-#     result = job.result()
-#     out = json.dumps(result.get_counts())
-#     string = out[2:11]
-#     string = string[::-1]
-#     print(string)
-#     if string in required_states:
-#         break
-#     else:
-#         for i in range(3):
-#             for j in range(3):
-#                 if board_coordinate[i][j] == 1:
-#                     qc.x(i*3 + j)
-
-# return qc
-
-
-board_coordinate = board_coordinates()
-
-circuit = qiskit.QuantumCircuit(9, 9)
-
-recent_moves = []
+    if is_maximizing:
+        best_score = float("-inf")
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == 0:
+                    board[i][j] = -1
+                    score = alphabeta_pruning(board, depth + 1, False, alpha, beta)
+                    board[i][j] = 0
+                    best_score = max(score, best_score)
+                    alpha = max(alpha, best_score)
+                    if beta <= alpha:
+                        break  # Break out of this iteration, not the entire function
+        return best_score
+    else:
+        best_score = float("inf")
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == 0:
+                    board[i][j] = 1
+                    score = alphabeta_pruning(board, depth + 1, True, alpha, beta)
+                    board[i][j] = 0
+                    best_score = min(score, best_score)
+                    beta = min(beta, best_score)
+                    if beta <= alpha:
+                        break  # Break out of this iteration, not the entire function
+        return best_score
 
 
-# Main loop
-running = True
-x_turn = True
-count = 0
-is_collapse = False
-quantum_moves = True
-coordinate_moves = []
-history_of_moves = []
-
-entanglement_coordinates = []
-
-entanglement_ = False
 
 
-draw_grid()
-pygame.display.flip()
+# def ai_make_move(board_coordinates):
+#     # Check for possible winning moves
+#     for row in range(3):
+#         for col in range(3):
+#             if board_coordinates[row][col] == 0:
+#                 board_copy = copy.deepcopy(board_coordinates)
+#                 board_copy[row][col] = -1
+#                 if check_winner(board_copy) == -1:
+#                     return row, col
+
+#     # Check for possible blocking moves
+#     for row in range(3):
+#         for col in range(3):
+#             if board_coordinates[row][col] == 0:
+#                 board_copy = copy.deepcopy(board_coordinates)
+#                 board_copy[row][col] = 1
+#                 if check_winner(board_copy) == 1:
+#                     return row, col
+
+#     # Randomly choose a move
+#     available_moves = []
+#     for row in range(3):
+#         for col in range(3):
+#             if board_coordinates[row][col] == 0:
+#                 available_moves.append((row, col))
+#     return random.choice(available_moves)
 
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+def play_with_ai():
+    global board_coordinate, circuit, recent_moves, x_turn, count, is_collapse, quantum_moves, history_of_moves, entanglement_coordinates, entanglement_
+    global previous_board_coordinate
+    
+    # Reset game state
+    board_coordinate = board_coordinates()
+    circuit = qiskit.QuantumCircuit(9, 9)
+    recent_moves = []
+    coordinate_moves = []
+    x_turn = True
+    count = 0
+    is_collapse = False
+    quantum_moves = True
+    history_of_moves = []
+    entanglement_coordinates = []
+    entanglement_ = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            cols = mouse_x // (WIDTH // GRID_SIZE)
-            rows = mouse_y // (HEIGHT // GRID_SIZE)
+        
+    screen.fill((0, 0, 0))
+    draw_grid()
+    pygame.display.flip()
 
-            if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
-                screen.fill((0, 0, 0))
-                draw_grid()
-                recent_moves.append([rows, cols])
-                history_of_moves.append([rows, cols])
-                if not is_collapse:
-                    coordinate_moves.append([rows, cols])
-                #     if x_turn:
-                #         board_coordinates[rows][cols] = 1
-                #         x_turn = False
-                #     else:
-                #         board_coordinates[rows][cols] = -1
-                #         x_turn = True
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
 
-                # if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
-                x_turn, count, board_coordinate = before_collapse(
-                    board_coordinate, rows, cols, quantum_moves, x_turn, count
-                )
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if x_turn:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    cols = mouse_x // (WIDTH // GRID_SIZE)
+                    rows = mouse_y // (HEIGHT // GRID_SIZE)
+
+                    if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
+                        screen.fill((0, 0, 0))
+                        draw_grid()
+                        recent_moves.append([rows, cols])
+                        history_of_moves.append([rows, cols])
+                        if not is_collapse:
+                            #
+                            coordinate_moves.append([rows, cols])
+
+                        x_turn, count, board_coordinate = before_collapse(
+                            board_coordinate, rows, cols, quantum_moves, x_turn, count
+                        )
+
+                        if len(recent_moves) == 2 and not is_collapse:
+                            circuit, recent_moves = quantum_game(circuit, recent_moves)
+
+                        print("This is X_turn", x_turn)
+
+                        if check_complete_fill(board_coordinate) and not is_collapse:
+                            draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                            pygame.display.flip()
+
+                            print("This is the non final board_coordinates", board_coordinate)
+
+                            pygame.time.delay(1000)
+
+                            screen.fill((0, 0, 0))
+
+                            draw_grid()
+
+                            if not is_collapse:
+                                is_collapse, quantum_moves, x_turn = collapse(
+                                    circuit,
+                                    is_collapse,
+                                    quantum_moves,
+                                    x_turn,
+                                    recent_moves,
+                                    board_coordinate,
+                                )
+                            print("THis is x_turn", x_turn)
+                            print("This is the final board_coordinates", board_coordinate)
+
+                            print("Love you", board_coordinate)
+
+                        if is_collapse:
+                            draw_circuit(board_coordinate)
+                            winner = check_winner(board_coordinate)
+                            if winner == 1:
+                                print("X wins!")
+                                cprint("X wins!", "red")
+                            elif winner == -1:
+                                print("O wins!")
+                                cprint("O wins!", "blue")
+                            elif check_complete_fill(board_coordinate):
+                                print("This is a Draw!")
+
+                        print("BOARD COORDINATES", board_coordinate)
+
+                        mark_entanglement(
+                            board_coordinate, rows, cols, previous_board_coordinate
+                        )
+
+                        previous_board_coordinate = copy.deepcopy(board_coordinate)
+
+                        draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+
+                        pygame.display.flip()
+
+                # AI makes a move
+            if not x_turn:
+                print("AI's turn")
+                
+                best_moves, board_coordinate = ai_make_move(board_coordinate, is_collapse)
+                print("Fuck", board_coordinate)
+                # board_coordinate[row][col] = -1
+
+                recent_moves.extend(best_moves)
+                history_of_moves.extend(best_moves)
+                if not is_collapse: 
+                    coordinate_moves.extend(best_moves)
+                x_turn = not x_turn
 
                 if len(recent_moves) == 2 and not is_collapse:
                     print()
                     circuit, recent_moves = quantum_game(circuit, recent_moves)
 
-                print("This is X_turn", x_turn)
-
                 if check_complete_fill(board_coordinate) and not is_collapse:
                     draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
                     pygame.display.flip()
-
-                    print("This is the non final board_coordinates", board_coordinate)
 
                     pygame.time.delay(1000)
 
@@ -569,56 +624,180 @@ while running:
                             recent_moves,
                             board_coordinate,
                         )
-                    print("THis is x_turn", x_turn)
-                    print("This is the final board_coordinates", board_coordinate)
 
-                    # wait for 1 second
-                    # wait for 10 second
+                    
 
-                    # pygame.display.flip()
-                    # draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
-
-                    print("Love you", board_coordinate)
-
-                if is_collapse:
-                    draw_circuit(board_coordinate)
-                    # connected = connected_qubits_with_entanglement(history_of_moves, entanglement_coordinates)
-
-                    winner = check_winner(board_coordinate)
-                    if winner == 1:
-                        print("X wins!")
-                        cprint("X wins!", "red")
-                        # running = False
-                    elif winner == -1:
-                        print("O wins!")
-                        cprint("O wins!", "blue")
-
-                    elif check_complete_fill(board_coordinate):
-                        print("This is a Draw!")
-
-                print("BOARD COORDINATES", board_coordinate)
-                # print("previous_board_coordinates", previous_board_coordinates)
-
-                # for i, instruction in enumerate(circuit.data):
-                #     if hasattr(instruction, 'operation') and hasattr(instruction.operation, 'name') and instruction.operation.name == 'cx':
-                #         qubits_connected = instruction.qubits
-                #         control_index = qubits_connected[0].index
-                #         target_index = qubits_connected[1].index
-
-                # Clear the screen
-                mark_entanglement(
-                    board_coordinate, rows, cols, previous_board_coordinate
-                )
+                    # mark_entanglement(
+                    #     board_coordinate, row, col, previous_board_coordinate
+                    # )
 
                 previous_board_coordinate = copy.deepcopy(board_coordinate)
-
-                # quanutum_game(board_coordinates, circuit, x_turn)
+                print("I love Board Coordinates", board_coordinate)
 
                 draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                print("This is is_collapse", is_collapse)
 
-                # Update the display
+                if is_collapse:
+                        draw_circuit(board_coordinate)
+                        winner = check_winner(board_coordinate)
+                        if winner == 1:
+                            print("X wins!")
+                            cprint("X wins!", "red")
+                        elif winner == -1:
+                            print("O wins!")
+                            cprint("O wins!", "blue")
+                        elif check_complete_fill(board_coordinate):
+                            print("This is a Draw!")
+
                 pygame.display.flip()
 
+        # Quit Pygame
 
-# Quit Pygame
-pygame.quit()
+
+def play_with_players():
+    global board_coordinate, circuit, recent_moves, x_turn, count, is_collapse, quantum_moves, history_of_moves, entanglement_coordinates, entanglement_
+    global previous_board_coordinate
+
+    # Reset game state
+    board_coordinate = board_coordinates()
+    circuit = qiskit.QuantumCircuit(9, 9)
+    recent_moves = []
+    x_turn = True
+    count = 0
+    is_collapse = False
+    quantum_moves = True
+    coordinate_moves = []
+    history_of_moves = []
+    entanglement_coordinates = []
+    entanglement_ = False
+    
+    screen.fill((0, 0, 0))
+    draw_grid()
+    pygame.display.flip()
+
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                cols = mouse_x // (WIDTH // GRID_SIZE)
+                rows = mouse_y // (HEIGHT // GRID_SIZE)
+                print("This is rows and cols", rows, cols)
+                
+
+                if 0 <= rows < GRID_SIZE and 0 <= cols < GRID_SIZE:
+                    screen.fill((0, 0, 0))
+                    draw_grid()
+                    # recent moves is the recent moves of X or O
+                    # it will contain 1 or max two element
+                    recent_moves.append([rows, cols])
+                    # it is the total history of moves of X or O
+                    history_of_moves.append([rows, cols])
+                    if not is_collapse:
+                        # coordinate_moves is the moves of X or O before the collapse
+                        coordinate_moves.append([rows, cols])
+
+                    x_turn, count, board_coordinate = before_collapse(
+                        board_coordinate, rows, cols, quantum_moves, x_turn, count
+                    )
+
+                    if len(recent_moves) == 2 and not is_collapse:
+                        print()
+                        circuit, recent_moves = quantum_game(circuit, recent_moves)
+
+                    if check_complete_fill(board_coordinate) and not is_collapse:
+                        draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                        pygame.display.flip()
+
+                        pygame.time.delay(1000)
+
+                        screen.fill((0, 0, 0))
+
+                        draw_grid()
+
+                        if not is_collapse:
+                            is_collapse, quantum_moves, x_turn = collapse(
+                                circuit,
+                                is_collapse,
+                                quantum_moves,
+                                x_turn,
+                                recent_moves,
+                                board_coordinate,
+                            )
+
+                    if is_collapse:
+                        draw_circuit(board_coordinate)
+                        winner = check_winner(board_coordinate)
+                        if winner == 1:
+                            print("X wins!")
+                            cprint("X wins!", "red")
+                        elif winner == -1:
+                            print("O wins!")
+                            cprint("O wins!", "blue")
+                        elif check_complete_fill(board_coordinate):
+                            print("This is a Draw!")
+
+
+                    mark_entanglement(
+                        board_coordinate, rows, cols, previous_board_coordinate
+                    )
+                    previous_board_coordinate = copy.deepcopy(board_coordinate)
+
+                    draw_x_or_y(board_coordinate, is_collapse, coordinate_moves)
+                    print("This is is collapse", is_collapse)
+
+                    pygame.display.flip()
+
+
+
+def main():
+    pygame.init()
+    # Main menu loop
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font("freesansbold.ttf", 16)
+    # title_text = font.render("Quantum Tic-Tac-Toe", True, (255, 255, 255))
+    # title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 4))
+    # screen.blit(title_text, title_rect)
+
+    # Draw the buttons
+    play_ai_button = pygame.Rect(50, 100, WIDTH - 100, 50)
+    play_ai_text = font.render("Play against AI", True, (255, 255, 255))
+    play_ai_text_rect = play_ai_text.get_rect(center=play_ai_button.center)
+    pygame.draw.rect(screen, (255, 0, 0), play_ai_button)
+    screen.blit(play_ai_text, play_ai_text_rect)
+
+    play_2p_button = pygame.Rect(50, 200, WIDTH - 100, 50)
+    play_2p_text = font.render("Play with 2 Players", True, (255, 255, 255))
+    play_2p_text_rect = play_2p_text.get_rect(center=play_2p_button.center)
+    pygame.draw.rect(screen, (0, 255, 0), play_2p_button)
+    screen.blit(play_2p_text, play_2p_text_rect)
+
+    pygame.display.flip()
+    while True:
+
+        # Draw the title text
+
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                # break
+                return
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                if play_ai_button.collidepoint(mouse_x, mouse_y):
+                    play_with_ai()
+                    print("HEhe")
+                elif play_2p_button.collidepoint(mouse_x, mouse_y):
+                    print("I am here")
+                    play_with_players()
+        
+
+if __name__ == "__main__":
+    main()
