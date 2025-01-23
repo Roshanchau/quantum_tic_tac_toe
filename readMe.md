@@ -43,13 +43,13 @@ This project was developed by the following team members:
 The system design of the Quantum Tic-Tac-Toe game involves a hybrid approach, combining classical and quantum computing. The game is built using Python, with Qiskit for quantum simulation and Pygame for the graphical interface.
 
 ### System Design Diagram
-![System Design](path/to/system-design.png)
+![System Design](./images/system%20design.png)
 
 ---
 
 ## Use Case Diagram
 The following diagram outlines the interactions between the players and the system, including the AI opponent:
-![Use Case Diagram](path/to/use-case-diagram.png)
+![Use Case Diagram](./images//usecase.png)
 
 ---
 
@@ -66,7 +66,7 @@ The following diagram outlines the interactions between the players and the syst
 2. **Min-Value Function**: Evaluates the best move for the player (minimizer).
 3. **Pruning**: If a move is found to be worse than the current best, the branch is pruned.
 
-![Alpha-Beta Pruning Diagram](path/to/alpha-beta-pruning.png)
+![Alpha-Beta Pruning Diagram](./images/alphabeta.png)
 
 ---
 
@@ -74,56 +74,51 @@ The following diagram outlines the interactions between the players and the syst
 Each tile on the board is represented by a qutrit (quantum trit), which can be in a superposition of states |0⟩, |1⟩, or |2⟩.
 
 ### Gates Used:
-- **Hadamard Gate**:
-  - Creates superposition:
-    \[
-    U_H|0⟩ = \frac{1}{\sqrt{2}}(|0⟩ + |1⟩), \quad U_H|1⟩ = \frac{1}{\sqrt{2}}(|0⟩ - |1⟩)
-    \]
-  - Matrix Representation:
-    \[
-    U_H = \frac{1}{\sqrt{2}}
-    \begin{bmatrix}
-    1 & 1 \\
-    1 & -1
-    \end{bmatrix}
-    \]
+## 1. Hadamard Gate
 
-- **CNOT Gate**:
-  - Entangles two qubits:
-    \[
-    U_{CNOT} =
-    \begin{bmatrix}
-    1 & 0 & 0 & 0 \\
-    0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 1 \\
-    0 & 0 & 1 & 0
-    \end{bmatrix}
-    \]
+- **Creates superposition**:
 
-- **Pauli X Gate**:
-  - Flips the state of a qubit:
-    \[
-    X =
-    \begin{bmatrix}
-    0 & 1 \\
-    1 & 0
-    \end{bmatrix}
-    \]
+  \[
+  U_H|0\rangle = \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle), \quad U_H|1\rangle = \frac{1}{\sqrt{2}}(|0\rangle - |1\rangle)
+  \]
+
+- **Matrix representation**:
+
+  \[
+  U_H = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+  \]
+
+## 2. CNOT Gate
+
+- **Entangles two qubits**:
+
+  \[
+  U_{CNOT} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{pmatrix}
+  \]
+
+## 3. Pauli X Gate
+
+- **Flips the state of a qubit**:
+
+  \[
+  X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+  \]
 
 ---
 
 ## Gameplay and Quantum Circuit Implementation
 ### Superposition Step
 - Players can place an X or O in multiple positions simultaneously using the Hadamard gate.
-![Superposition Circuit](path/to/superposition-circuit.png)
+![Superposition step](./images/superposition_doc.png)
+![Superposition Circuit](./images/superposition_ckt.png)
 
 ### Entanglement Step
 - Players can entangle two tiles using the CNOT gate, creating a correlation between the states of the tiles.
-![Entanglement Circuit](path/to/entanglement-circuit.png)
+![Entanglement step](./images/entg_game.png)
 
 ### Collapse Step
 - The superposition is reduced to a single classical state, either |0⟩ or |1⟩, with a 50% probability.
-![Collapse Circuit](path/to/collapse-circuit.png)
+![Collapse Circuit](./images/entg_ck.png)
 
 ---
 
