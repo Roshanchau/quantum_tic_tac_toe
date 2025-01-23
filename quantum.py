@@ -15,7 +15,7 @@ WIDTH_B, HEIGHT_B = 400, 660
 WIDTH, HEIGHT = 400, 400
 LINE_COLOR = (255, 255, 255)
 LINE_WIDTH = 5
-GRID_SIZE = 3
+GRID_SIZE = 3 
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -317,7 +317,7 @@ def check_complete_fill(board_coordinates):
 def draw_circuit(board_coordinate):
     global previous_board_coordinates
     for inx, row in enumerate(board_coordinate):
-        for j, i in enumerate(row):
+        for j, i in enumerate(row): 
             if i != 0 and previous_board_coordinates[inx][j] == 0:
                 circuit.x(inx * 3 + j)
 
