@@ -74,35 +74,7 @@ The following diagram outlines the interactions between the players and the syst
 Each tile on the board is represented by a qutrit (quantum trit), which can be in a superposition of states |0⟩, |1⟩, or |2⟩.
 
 ### Gates Used:
-### 1. Hadamard Gate
-
-- **Creates superposition**:
-
-  \[
-  U_H|0\rangle = \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle), \quad U_H|1\rangle = \frac{1}{\sqrt{2}}(|0\rangle - |1\rangle)
-  \]
-
-- **Matrix representation**:
-
-  \[
-  U_H = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
-  \]
-
-### 2. CNOT Gate
-
-- **Entangles two qubits**:
-
-  \[
-  U_{CNOT} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{pmatrix}
-  \]
-
-### 3. Pauli X Gate
-
-- **Flips the state of a qubit**:
-
-  \[
-  X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
-  \]
+![mathematica formulation](./images/math.png)
 
 
 ## Gameplay and Quantum Circuit Implementation
@@ -114,12 +86,12 @@ Each tile on the board is represented by a qutrit (quantum trit), which can be i
 ### Entanglement Step
 - Players can entangle two tiles using the CNOT gate, creating a correlation between the states of the tiles.
 ![Entanglement step](./images/entg_game.png)
-![Entanglement circuit](./images/entg_ck.png.png)
+![Entanglement circuit](./images/entg_ck.png)
 
 ### Collapse Step
 - The superposition is reduced to a single classical state, either |0⟩ or |1⟩, with a 50% probability.
-![Collapse step](./images/collapse_game.png.png)
-![Collapse Circuit](./images/collapse_ckt.png.png)
+![Collapse step](./images/collapse_game.png)
+![Collapse Circuit](./images/collapse_ckt.png)
 
 ---
 
